@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <h2>Certificate Generator</h2>
+
+    <form id="certForm">
+        <input type="text" name="name" placeholder="Enter name" required />
+        <button type="submit">Generate</button>
+    </form>
+
+    <script>
+        document.getElementById("certForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const form = e.target;
+            const formData = new FormData(form);
+            const name = formData.get("name"); // ✅ get name
+
+            const res = await fetch("/generate", {
+                method: "POST",
+                body: formData
+            });
+
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `${name}.pdf`; // ✅ JS template literal
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+
+            window.URL.revokeObjectURL(url);
+        });
+    </script>
+</body>
+
+</html>
